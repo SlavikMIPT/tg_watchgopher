@@ -29,7 +29,8 @@ def main(argv):
                 shutil.rmtree(dir_path)
                 counter = 0
             io_child_count = get_stats.get_io_child_count()
-            bot.edit_message_text('🌐 *{0}*  *{2}* {1}'.format(io_child_count, date_str, time_str),
+            io_mtproto = get_stats.get_mtproto_connections()
+            bot.edit_message_text('🌐 *ss5:{0} mtp:{3}*  *{2}* {1}'.format(io_child_count, date_str, time_str, io_mtproto),
                                   msg.chat.id, msg.message_id, parse_mode='Markdown')
             sleep(small_period_sec)
             counter += small_period_sec

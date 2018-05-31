@@ -1,5 +1,20 @@
 import re
 import subprocess
+import urllib.request
+
+
+def get_mtproto_connections(url="http://localhost:8888/stats"):
+    fp = urllib.request.urlopen(url)
+    mybytes = fp.read()
+    mystr = mybytes.decode("utf8")
+    fp.close()
+    res = re.search(r'(?<=(active_connections))((.|\t)*?)(\d+)', mystr, re.U)
+    result_conn = 0
+    if res:
+        result_conn = res.group(0)
+        result_conn = int(re.sub(r'[\t.]', '', result_conn))
+        print(result_conn)
+    return result_conn
 
 
 def get_io_child_count():
