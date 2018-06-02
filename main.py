@@ -19,7 +19,8 @@ def main(argv):
     period_sec = int(argv[2])
     small_period_sec = 5
     counter = 0
-    nload_pipe = get_stats.create_polling_thread()
+    nload_pipe = get_stats.create_load_polling_thread()
+    atop_pipe = get_stats.create_system_polling_thread()
     pin_str= ''
     while True:
         try:
@@ -33,15 +34,17 @@ def main(argv):
                 counter = 0
             io_child_count = get_stats.get_io_child_count()
             io_mtproto = get_stats.get_mtproto_connections()
-            inc_load, out_load = get_stats.get_channel_load(nload_pipe)
+            ainc_load, aout_load = get_stats.get_channel_load(nload_pipe, r'Avg:')
+            cinc_load, cout_load = get_stats.get_channel_load(nload_pipe, r'Curr:')
+            cpu_load, free_ram = get_stats.get_system_load(atop_pipe)
             if counter / small_period_sec % 2 == 0:
-                pre_str = '🌐↓↓'
+                pre_str = '🌐↓↓*{0}{1}  * '.format(cinc_load[0],cinc_load[1])
             else:
-                pre_str = '🌐↓  '
+                pre_str = '🌐↓  *{0}{1}  * '.format(cinc_load[0],cinc_load[1])
             if counter / small_period_sec / 2 % 2 == 0:
-                pin_str = '*{4}{5}*    👥 *SS5:{0}* *MTP:{3}*  *{2}* {1}'.format(io_child_count, date_str, time_str,
+                pin_str = 'Σ:*{4}{5}*  👥 *SS5:{0}* *MTP:{3}* 🌡*CPU:{1}* *RAM:{2}*'.format(io_child_count, cpu_load, free_ram,
                                                                              io_mtproto,
-                                                                             inc_load[0], inc_load[1])
+                                                                             ainc_load[0], ainc_load[1])
             bot.edit_message_text(pre_str + pin_str, msg.chat.id, msg.message_id, parse_mode='Markdown')
             sleep(small_period_sec)
             counter += small_period_sec
