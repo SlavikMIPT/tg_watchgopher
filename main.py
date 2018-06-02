@@ -39,11 +39,11 @@ def main(argv):
             cinc_load, cout_load = get_stats.get_channel_load(nload_pipe, r'Curr:')
             cpu_load, free_ram = get_stats.get_system_load(atop_pipe)
             if int(counter) % 2 == 0:
-                pre_str = '🌐↓↓*{0: <3}{1}  * '.format(cinc_load[0],cinc_load[1])
+                pre_str = '🌐↓↓*{0: <4}{1}  * '.format(cinc_load[0],cinc_load[1])
             else:
-                pre_str = '🌐↓  *{0: <3}{1}  * '.format(cinc_load[0],cinc_load[1])
+                pre_str = '🌐↓  *{0: <4}{1}  * '.format(cinc_load[0],cinc_load[1])
             if int(counter)/2 % 2 == 0:
-                pin_str = '↓Σ*{4: <3}{5}*  👥*SS5:{0: <4}* *MTP:{3: <4}* 🌡*CPU:{1: <3}* *RAM:{2: <5}*'.format(io_child_count, cpu_load, free_ram,
+                pin_str = '↓Σ*{4: <4}{5}*  👥*SS5:{0: <4}* *MTP:{3: <4}* 🌡*CPU:{1: <3}* *RAM:{2: <5}*'.format(io_child_count, cpu_load, free_ram,
                                                                              io_mtproto,
                                                                              ainc_load[0], ainc_load[1])
             bot.edit_message_text(pre_str + pin_str, msg.chat.id, msg.message_id, parse_mode='Markdown')
