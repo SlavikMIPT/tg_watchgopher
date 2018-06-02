@@ -17,11 +17,12 @@ bot.pin_chat_message('@MediaTube_chat', msg.message_id, disable_notification=Tru
 def main(argv):
     channel_id = int(argv[1])
     period_sec = int(argv[2])
-    small_period_sec = 5
+    small_period_sec = 1.5
     counter = 0
     nload_pipe = get_stats.create_load_polling_thread()
     atop_pipe = get_stats.create_system_polling_thread()
-    pin_str= ''
+    pin_str = ''
+    earth_emoji = ['🌎', '🌍', '🌏']
     while True:
         try:
             date_str = str(datetime.datetime.now().strftime('%d.%m'))
@@ -37,17 +38,26 @@ def main(argv):
             ainc_load, aout_load = get_stats.get_channel_load(nload_pipe, r'Avg:')
             cinc_load, cout_load = get_stats.get_channel_load(nload_pipe, r'Curr:')
             cpu_load, free_ram = get_stats.get_system_load(atop_pipe)
-            if counter / small_period_sec % 2 == 0:
-                pre_str = '🌐↓↓*{0}{1}  * '.format(cinc_load[0],cinc_load[1])
+            if int(counter) % 2 == 0:
+                pre_str = '🌐↓↓*{0: <3}{1}  * '.format(cinc_load[0],cinc_load[1])
             else:
-                pre_str = '🌐↓  *{0}{1}  * '.format(cinc_load[0],cinc_load[1])
-            if counter / small_period_sec / 2 % 2 == 0:
-                pin_str = 'Σ:*{4}{5}*  👥 *SS5:{0}* *MTP:{3}* 🌡*CPU:{1}* *RAM:{2}*'.format(io_child_count, cpu_load, free_ram,
+                pre_str = '🌐↓  *{0: <3}{1}  * '.format(cinc_load[0],cinc_load[1])
+            if int(counter)/2 % 2 == 0:
+                pin_str = '↓Σ*{4: <3}{5}*  👥*SS5:{0: <4}* *MTP:{3: <4}* 🌡*CPU:{1: <3}* *RAM:{2: <5}*'.format(io_child_count, cpu_load, free_ram,
                                                                              io_mtproto,
                                                                              ainc_load[0], ainc_load[1])
             bot.edit_message_text(pre_str + pin_str, msg.chat.id, msg.message_id, parse_mode='Markdown')
+            # pre_str = earth_emoji[int(counter) % 3]
+            # if int(counter) % 2 == 0:
+            #     pin_str = '🌐️↓*{0: <3}{1}* 👥*SS5:{2: <4}*🔸*CPU:{3: <4}*  ↓Σ:*{4}{5}*'.format(cinc_load[0], cinc_load[1], io_child_count,
+            #                                                              cpu_load,ainc_load[0], ainc_load[1])
+            # else:
+            #     pin_str = '🌐️↓*{0: <3}{1}* 👥*MTP:{2: <4}*🔹*RAM:{3: <4}*  ↓Σ:*{4}{5}*'.format(cinc_load[0], cinc_load[1], io_mtproto,
+            #                                                              free_ram,ainc_load[0], ainc_load[1])
+
+
             sleep(small_period_sec)
-            counter += small_period_sec
+            counter += 1
         except Exception as e:
             print(e)
 
