@@ -17,7 +17,7 @@ bot.pin_chat_message('@MediaTube_chat', msg.message_id, disable_notification=Tru
 def main(argv):
     channel_id = int(argv[1])
     period_sec = int(argv[2])
-    small_period_sec = 1.5
+    small_period_sec = 1
     counter = 0
     nload_pipe = get_stats.create_load_polling_thread()
     atop_pipe = get_stats.create_system_polling_thread()
@@ -25,8 +25,8 @@ def main(argv):
     earth_emoji = ['🌎', '🌍', '🌏']
     while True:
         try:
-            date_str = str(datetime.datetime.now().strftime('%d.%m'))
-            time_str = str(datetime.datetime.now().strftime('%H:%M'))
+            # date_str = str(datetime.datetime.now().strftime('%d.%m'))
+            # time_str = str(datetime.datetime.now().strftime('%H:%M'))
             if counter >= period_sec:
                 archive_path, dir_path = dbdump.create_dbdump()
                 bot.send_document(channel_id, data=open(archive_path, 'rb'), disable_notification=True)
@@ -36,28 +36,17 @@ def main(argv):
             io_child_count = get_stats.get_io_child_count()
             io_mtproto = get_stats.get_mtproto_connections()
             ainc_load, aout_load = get_stats.get_channel_load(nload_pipe, r'Avg:')
-            cinc_load, cout_load = get_stats.get_channel_load(nload_pipe, r'Curr:')
+            # cinc_load, cout_load = get_stats.get_channel_load(nload_pipe, r'Curr:')
             cpu_load, free_ram = get_stats.get_system_load(atop_pipe)
-            if int(counter) % 2 == 0:
-                pre_str = '🌐↓↓*{0: <4}{1}  * '.format(cinc_load[0],cinc_load[1])
-            else:
-                pre_str = '🌐↓  *{0: <4}{1}  * '.format(cinc_load[0],cinc_load[1])
-            if int(counter)/2 % 2 == 0:
-                pin_str = '↓Σ*{4: <4}{5}*  👥*SS5:{0: <4}* *MTP:{3: <4}* 🌡*CPU:{1: <3}* *RAM:{2: <5}*'.format(io_child_count, cpu_load, free_ram,
-                                                                             io_mtproto,
-                                                                             ainc_load[0], ainc_load[1])
-            bot.edit_message_text(pre_str + pin_str, msg.chat.id, msg.message_id, parse_mode='Markdown')
-            # pre_str = earth_emoji[int(counter) % 3]
             # if int(counter) % 2 == 0:
-            #     pin_str = '🌐️↓*{0: <3}{1}* 👥*SS5:{2: <4}*🔸*CPU:{3: <4}*  ↓Σ:*{4}{5}*'.format(cinc_load[0], cinc_load[1], io_child_count,
-            #                                                              cpu_load,ainc_load[0], ainc_load[1])
-            # else:
-            #     pin_str = '🌐️↓*{0: <3}{1}* 👥*MTP:{2: <4}*🔹*RAM:{3: <4}*  ↓Σ:*{4}{5}*'.format(cinc_load[0], cinc_load[1], io_mtproto,
-            #                                                              free_ram,ainc_load[0], ainc_load[1])
-
+            pre_str = '🔻🔺*|{0}{1}|{2}{3}|*   '.format(ainc_load[0], ainc_load[1], aout_load[0], aout_load[1])
+            pin_str = '👥*SCK:{0}k 🔰MTP:{1}   🌡CPU:{2}  RAM:{3}*'.format(float(int(io_child_count / 100)) / 10,
+                                                                           int(io_mtproto),
+                                                                           cpu_load, free_ram)
+            bot.edit_message_text(pre_str + pin_str, msg.chat.id, msg.message_id, parse_mode='Markdown')
 
             sleep(small_period_sec)
-            counter += 1
+            counter += small_period_sec
         except Exception as e:
             print(e)
 

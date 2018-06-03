@@ -15,7 +15,7 @@ class SystemlLoadPolling(Thread):
         msg = "%s is running" % self.name
         print(msg)
         time.sleep(1)
-        self.pipe = subprocess.Popen('atop 2', shell=True,
+        self.pipe = subprocess.Popen('atop', shell=True,
                                      stdout=subprocess.PIPE,
                                      stderr=subprocess.STDOUT,
                                      universal_newlines=True)
@@ -93,9 +93,9 @@ def get_channel_load(pipe, param=r'Avg:'):
                 res = re.sub(r'[^(MBit/s),(kBit/s)]', '', res, re.U)
                 inc_str, out_str = res[:6], res[6:]
                 if inc_str == 'kBit/s':
-                    inc_avg /= 1000
+                    inc_avg = float(inc_avg) / 1000
                 if out_str == 'kBit/s':
-                    out_avg /= 1000
+                    out_avg = float(out_avg) / 1000
                 inc_str = out_str = 'Mb/s'
                 return (int(float(inc_avg) + 0.5), inc_str), (int(float(out_avg) + 0.5), out_str)
     except Exception:
