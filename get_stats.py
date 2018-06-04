@@ -101,7 +101,33 @@ def get_channel_load(pipe, param=r'Avg:'):
     except Exception:
         return (0, 'e'), (0, 'e')
 
-
+def get_downdetector_stats(url="https://downdetector.ru/ne-rabotaet/telegram"):
+    try:
+        req = urllib.request.Request(
+            url,
+            data=None,
+            headers={
+                'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) AppleWebKit/537.36 (KHTML, like Gecko) '
+                              'Chrome/35.0.1916.47 Safari/537.36'
+            }
+        )
+        # f = urllib.request.urlopen(req)
+        fp = urllib.request.urlopen(req)
+        mybytes = fp.read()
+        mystr = mybytes.decode("utf8")
+        fp.close()
+        res = re.findall(r'{ date: .+, value: \d+  }', mystr, re.U)
+        max_value = 0
+        if res:
+            res.reverse()
+            for i in range(4):
+                res_date = re.search(r'(?<=(date: \'))(.)+?(?=(\'))', res[i], re.U)
+                date_str = res_date.group(0)
+                res_value = int(re.search(r'(?<=(value: ))(.)+?(?=(\}))', res[i], re.U).group(0))
+                max_value = res_value if res_value > max_value else max_value
+    except Exception:
+        max_value = -1
+    return max_value
 def get_mtproto_connections(url="http://localhost:8888/stats"):
     fp = urllib.request.urlopen(url)
     mybytes = fp.read()
