@@ -1,5 +1,9 @@
 # tg_watchgopher
-### 1.Create Telegram private channel for backups
-### 2.Get channel id (@getidsbot)
-### 3.Edit main.py to include your own files to backup
-### 4.Run python3.6 main.py "channel_id" "backup_period_sec"
+- Create Telegram private channel for backups
+- Get channel id (@getidsbot)
+- Edit main.py to include your own files to backup
+- Edit dbbackup.service and dbbackup.timer and place to /etc/systemd/system
+- sudo systemctl enable dbbackup.timer
+- sudo systemctl daemon-reload
+- sudo systemctl start dbbackup.timer
+- sudo systemctl status dbbackup.timer

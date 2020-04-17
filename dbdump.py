@@ -10,9 +10,7 @@ def create_dbdump():
     out_dir = 'dump_' + date_str + '__' + time_str
     out_name = date_str + '__' + time_str
     os.mkdir(out_dir)
-    for collection in ['audiotube', 'videotube']:
-        process_call_str = 'mongodump --out {0} ' \
-                           '--collection users --db {1}'.format(out_dir, collection)
-        status = subprocess.check_call(process_call_str, shell=True)
+    process_call_str = f'mongodump --out {out_dir} '
+    status = subprocess.check_call(process_call_str, shell=True)
     filename = shutil.make_archive(out_name, 'zip', out_dir)
     return os.path.abspath(filename), os.path.abspath(out_dir)

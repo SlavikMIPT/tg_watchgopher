@@ -1,0 +1,9 @@
+[Timer]
+# Run after booting one minute
+OnBootSec=1min
+# Run every one hour or one munite
+# OnUnitActiveSec=1h
+OnUnitActiveSec=12h
+Unit=dbbackup.service
+[Install]
+WantedBy=timer.target

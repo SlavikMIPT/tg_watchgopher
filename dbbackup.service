@@ -1,0 +1,10 @@
+[Unit]
+Description=Database backup service
+[Service]
+Type=oneshot
+WorkingDirectory=/home/admin/tg_watchgopher
+ExecStart=/bin/python3.6 /home/admin/tg_watchgopher/main.py
+SyslogIdentifier=database-backup-service
+User=admin
+[Install]
+WantedBy=multi-user.target
